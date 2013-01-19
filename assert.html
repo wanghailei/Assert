@@ -1,0 +1,441 @@
+<DOCTYPE html>
+<html>
+<head>
+	<title>Test Suite</title>
+	<style type="text/css" media="screen">	
+		body {
+			background-color:#000000;		
+		}
+		#results {
+			font-family:"OCR A Std"; font-size:10px; text-transform: uppercase;
+			list-style: decimal outside;
+			padding:40px;			
+		}
+		#results li {
+                        line-height:15px;
+		}
+		#results li.pass { color: #00CC33; } 
+		#results li.fail { color: #FF0033; text-decoration: line-through; 
+		}		
+	</style>
+</head>
+<body>
+	<ul id="results"></ul>
+	<script type="text/javascript" charset="utf-8">
+	        function assert(value, description) { 
+			var li = document.createElement("li"); 
+			li.className = value ? "pass" : "fail"; 
+			li.appendChild(document.createTextNode(description)); 
+			document.getElementById("results").appendChild(li);
+		} 
+		window.onload = function() {
+			// assert(true, "The test suite is running."); 
+			// assert(false, "Fail!");
+		}; 		
+	</script>
+	<script type="text/javascript" charset="utf-8">	
+
+		function creep() {
+			// Returns its function invocation context.
+			// assert( this === window, "The function invocation context is window." );
+			return this;
+		}
+
+		assert( creep() === window, "Creeping in the window" );
+
+		var sneak = creep;
+		assert( sneak() === window, "Sneaking in the window" );
+		
+		// Define an object in variable ninja1.
+		var ninja1 = {
+			// A property named skulk, which receives a reference to the creep() function.
+			// By doing so, we say that we have created a method named skulk on that object.
+			skulk : creep
+		};
+		assert( ninja1.skulk() === ninja1, "The 1st ninja is skulking." );
+
+		var ninja2 = {
+			skulk : creep
+		};
+		assert( ninja2.skulk() === ninja2, "The 2nd ninja is skulking. Namely, ninja2.skulk()'s function invocation context is ninja2." );
+
+		console.log( "The type of ninja1 is " + typeof( ninja1 ) );
+		console.log( "The name of ninja1 is " + ninja1.name );
+		console.log( "The type of ninja1.skulk is " + typeof( ninja1.skulk ) );
+		console.log( "The name of ninja1.skulk is " + ninja1.skulk.name );
+		console.log( "The type of ninja1.skulk() is " + typeof( ninja1.skulk() ) );
+		console.log( "The name of ninja1.skulk() is " + ninja1.skulk().name );
+				
+	</script>
+	<script type="text/javascript" charset="utf-8">
+		
+		function Ninja () {
+			this.skulk = function () {
+				return this; 
+			};
+		}
+		
+		var ninja3 = new Ninja();
+		var ninja4 = new Ninja();
+		
+		assert( ninja3.skulk() === ninja3, "The 3rd ninja is skulking." );
+		assert( ninja4.skulk() === ninja4, "The 4th ninja is skulking." );
+		
+	</script>
+	<script type="text/javascript" charset="utf-8">
+		
+		function juggle () {
+			var result = 0;
+			// for (var i=0; i < arguments.length; i++) {
+			// 	result += arguments[i];
+			// };
+			for (var i = arguments.length - 1; i >= 0; i--){
+				result += arguments[i]
+			};
+			this.result = result;
+			return this;
+		}
+		assert( juggle() === window, "The function jungle's function invocation context is window." );
+				
+		var ninja5 = {};
+		var ninja6 = {};
+		
+		// Function invocation. Changed the 'this' argument to ninja5 and ninja6 in each invocation.
+		juggle.apply( ninja5, [1, 2, 3, 4] );
+		juggle.call( ninja6, 1, 2, 3, 4 );
+		
+		assert( ninja5.result === 10, "The function juggle is invoked via apply." );
+		assert( ninja6.result === 10, "The function juggle is invoked via call." );
+		
+	</script>
+	
+	<script type="text/javascript" charset="utf-8">
+		
+		function foreach ( list, callback ) {
+			for ( var i = 0; i < list.length; i++ ) {
+				callback.call( list[i], i );
+			};
+		}
+		
+		var list = [ 'shuriken', 'katana', 'nunchucks' ];
+		
+		foreach( list, function ( index ) {
+			// console.log( index );
+			// console.log( this );
+			// console.log( list[index] );
+			// console.log( typeof( list[index] ) );
+			// console.log( typeof( this ) );
+			assert( this === list[index], "Got the expected value of " + list[index] );
+		});
+		
+	</script>
+	
+	<script type="text/javascript" charset="utf-8">
+		
+		function isPalindrome ( text ) {
+			if ( text.length <= 1 ) {
+				return true;
+			}
+			if ( text.charAt( 0 ) != text.charAt( text.length - 1 ) ) {
+				return false;
+			}
+			console.log( text );
+			return isPalindrome( text.substr( 1, text.length - 2 ) );
+		}
+		assert( isPalindrome( "abababa" ), "'abababa' is a palindrome." );
+
+	</script>
+        <script type="text/javascript" charset="utf-8">
+                
+                function chirp ( n ) {
+                       return n > 1 ? chirp( n - 1 ) + "-chirp" : "chirp"; 
+                }
+
+                assert( chirp( 3 ) === "chirp-chirp-chirp", "Calling the named function comes naturally." );
+                console.log( chirp( 1 ) );
+                console.log( chirp( 2 ) );
+
+                function fuck ( n ) {
+                        return n > 0 ? fuck( n - 1 ) + "-Aha"+n : "Enter";
+                }
+                
+                console.log( fuck( 100 ) );
+        </script>
+        <script type="text/javascript" charset="utf-8">
+                
+                var ninja = {
+                        chirp : function ( n ) {
+                                // return n > 1 ? ninja.chirp( n - 1 ) + "-chirp" : "chirp";
+                                return n > 1 ? this.chirp( n - 1 ) + "-chirp" : "chirp";
+                        }
+                };
+                var samurai = {
+                        chirp : ninja.chirp
+                };
+                console.log( samurai.chirp( 5 ) );
+                
+                ninja = {};
+
+                try {
+                        assert( samurai.chirp(3) === "chirp-chirp-chirp", "It seems the samurai really learned the chirp skill." );
+                } catch( e ) {
+                        assert( false, "Uh, this isn't good! Where'd ninja.chirp go?" );
+                }
+        </script>
+        <script type="text/javascript">
+                
+                var ninja = function ninjable () {
+                        assert( ninja === ninjable, "This function is given two names at once!" );
+                }
+                
+                ninja();
+
+                assert( typeof ninjable === "undefined", "But ninjable isn't defined outside of the function." );
+        </script>
+        <script type="text/javascript" >
+
+                var store = {
+                        nextId : 1,
+                        cache : {},
+                        add : function (func) {
+                                if ( !func.id ) {
+                                        func.id = store.nextId++;
+                                        return store.cache[func.id] = func;
+                                }
+                        }
+                }
+                
+                function ninja () {}
+
+                assert( store.add( ninja ), "Function was safely added." );
+                assert( !store.add( ninja ), "But it was only added once." );
+
+        </script>
+        <script type="text/javascript">
+
+                function isPrime ( value ) {
+
+                        if ( !isPrime.answers) {
+                                isPrime.answers = {};
+                        }
+                        if ( isPrime.answers[value] != null ) {
+                                return isPrime.answers[value];
+                        }
+                        // 1 can never be prime.
+                        var prime = value != 1;
+                        for ( var i = 2; i < value; i++ ) {
+                                if ( value % i === 0 ) {
+                                        prime = false;
+                                        break;
+                                }
+                        }
+                        return isPrime.answers[value] = prime;
+                }
+
+                assert( isPrime( 5 ), "5 is prime!" );
+                assert( isPrime.answers[5], "The answer was cached!" );
+
+                function getElements ( name ) {
+                        if ( !getElements.cache ) {
+                                getElements.cache = {};
+                        }
+                        return getElements.cache[name] || document.getElementsByTagName( name );
+                }
+                
+                console.log( getElements( "li" ) );
+        </script>
+        <script type="text/javascript">
+                
+                function smallest (array) {
+                        return Math.min.apply(Math, array);
+                }
+                function largest (array) {
+                        return Math.max.apply(Math, array);
+                }
+                
+                assert( smallest( [0, 1, 2, 3] ) === 0, "Located the smallest value." );
+                assert( largest( [0, 1, 2, 3] ) === 3, "Located teh largest value." );
+
+                function multiFirstMax ( args ) {
+
+                        return args * Math.max.apply( Math, Array.prototype.slice.call( arguments, 1 ) );
+
+                }
+                
+                assert( multiFirstMax( 3, 8, 9, 4, 8 ) === 3 * 9, "3 * 9 === 27" );
+        </script>
+        <script type="text/javascript">
+                
+                var outerValue = 'ninja';
+                var later;
+
+                function outerFunction () {
+                        var innerValue = 'samurai';
+                        function innerFunction () {
+                                assert( outerValue, "I can see the ninja." );
+                                assert( innerValue, "I can see the samurai." );
+                        }
+                        later = innerFunction;
+                }
+                
+                outerFunction();
+                later();
+
+        </script>     
+        <script type="text/javascript">
+                
+                var outsideValue = 'Windows 8';
+                var laterValue;
+
+                function outsideFunction () {
+                        
+                        var insideValue = 'Windows Phone 8';
+
+                        function insideFunction ( insideParam ) {
+                                assert( insideValue, 'insideFunction can see insideValue' );
+                                assert( outsideValue, 'insideFunction can see outsideValue' );
+                                assert( laterValue, 'insideFunction can see laterValue' );
+                                assert( insideParam, 'insideFunction can see insideParam' );
+                        }
+                        laterValue = insideFunction();
+                }
+                
+                outsideFunction();
+
+                var behindValue = 'Windows Runtime';
+                
+                //laterValue( 'Windows Insider' );
+
+        </script>
+        <script type="text/javascript">
+
+                function Ninja () {
+
+                        var slices = 0;
+
+                        this.getSlices = function () {
+                                return slices;
+                        };
+
+                        this.slice = function () {
+                                slices++; 
+                        };
+
+                        return this;
+                }
+        
+                var ninja = new Ninja();
+                ninja.slice();
+                
+                assert( ninja.getSlices() === 1, "We're able to access the internal slice data." );
+                assert( ninja.slices === undefined, "And the private data is inaccessible to us." );
+
+        </script>
+        <script type="text/javascript">
+
+                function SamuraiOne () {
+                        this.sword = "Kenji Sword";
+                        return "I'm Samurai One.";
+
+                } 
+               
+                var s1 = SamuraiOne;
+                var s2 = SamuraiOne();
+                var s3 = new SamuraiOne();
+                
+                assert( s1 instanceof SamuraiOne, "s1 is an instance of SamuraiOne." );
+                assert( s3 instanceof SamuraiOne, "s3 is an instance of new SamuraiOne." );
+                
+                function MakeIronman () {
+                        var Ironman = {
+                                name : "Ironman",
+                                skill : function jet () {
+                                        return "Jet!";
+                                }
+                        }; 
+                }
+                var icon1 = new MakeIronman();
+                console.log( "icon1.constructor -> "+icon1.constructor );
+                console.log( icon1.constructor.prototype );
+                console.log( icon1.prototype );
+                console.log( typeof(icon1) );
+                assert( icon1.constructor.prototype === icon1.prototype, "The two prototype are the same one." ); 
+        </script>
+        <script type="text/javascript">
+                
+                function MyArray () {
+                }
+                MyArray.prototype.length = 0;
+
+                (function () {
+                        var methods = [ "push", "pop", "shift", "unshift", "slice", "splice", "join" ];
+                        for ( var i = 0; i < methods.length; i++ ) {
+                                (function ( name ) {
+                                        MyArray.prototype[ name ] = function () {
+                                                return Array.prototype[ name ] = function () {
+                                                        return Array.prototype[ name ].apply( this, arguments );
+                                                }
+                                        };
+                                })( methods[ i ] );
+                        }
+                })();
+                
+                var mine = new MyArray();
+                mine.push( 1, 2, 3 );
+                assert( mine.length === 3, "All the items are on our sub-classed array." );
+                assert( !( mine instanceof Array ), "We aren't subclassing Array, though." );
+        
+        </script>
+        <script type="text/javascript">
+                
+                function User ( first, last ) {
+                        if ( !(this instanceof arguments.callee) ) {
+                                return new User( first, last );
+                        }
+                        this.name = first + " " + last;
+                }
+
+                var user = User( "Ichigo", "Kurosaki" );
+                console.log( "typeof user is " + typeof(user) );
+                assert( user, "User instantiated" );
+                assert( user.name === "Ichigo Kurosaki", "User name correctly assigned" );
+
+                function Test () {
+                        return this instanceof arguments.callee;
+                }
+                
+                assert( Test(), "We didn't instantiate, so it returns fales." );
+                assert( new Test(), "We did instantiate, returning true." );
+                console.log( Test() );
+        </script>
+        <script type="text/javascript">
+
+                var Greeter = ( function () {
+                        function Greeter ( message ) {
+                                this.greeting = message;
+                        }
+                        Greeter.prototype.greet = function () {
+                                return "Hello, " + this.greeting;
+                        };
+                        return Greeter;
+                } )();
+                var greeter = new Greeter( "Hailei is a great programmer." );
+                
+                var Sayings;
+                ( function ( Sayings ) {
+                        var Greeter = ( function () {
+                                function Greeter ( message ) {
+                                        this.message = message;                                        
+                                }
+                                Greeter.prototype.greet = function () {
+                                        return "Hello, " + this.message;
+                                };
+                                return Greeter;
+                        } )();
+                        Sayings.Greeter = Greeter;
+                } )( Sayings || ( Sayings = {} ) );
+                var afriend = new Sayings.Greeter( "Friend" );
+
+        </script>
+</body>
+</html>
